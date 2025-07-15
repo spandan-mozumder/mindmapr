@@ -31,6 +31,8 @@ export default function ResumeBuilder({ initialContent }) {
   const { user } = useUser();
   const [resumeMode, setResumeMode] = useState("preview");
 
+  
+
   const {
     control,
     register,
@@ -116,11 +118,12 @@ export default function ResumeBuilder({ initialContent }) {
     setIsGenerating(true);
     try {
       const element = document.getElementById("resume-pdf");
+
       const opt = {
         margin: [15, 15],
         filename: "resume.pdf",
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
+        html2canvas: { scale: 2, backgroundColor: "#fff" },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       };
 

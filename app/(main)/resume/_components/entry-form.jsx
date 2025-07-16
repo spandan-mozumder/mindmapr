@@ -86,7 +86,6 @@ export function EntryForm({ type, entries, onChange }) {
     }
   }, [improvedContent, improveError, isImproving, setValue]);
 
-  // Replace handleImproveDescription with this
   const handleImproveDescription = async () => {
     const description = watch("description");
     if (!description) {
@@ -96,7 +95,7 @@ export function EntryForm({ type, entries, onChange }) {
 
     await improveWithAIFn({
       current: description,
-      type: type.toLowerCase(), // 'experience', 'education', or 'project'
+      type: type.toLowerCase(),
     });
   };
 

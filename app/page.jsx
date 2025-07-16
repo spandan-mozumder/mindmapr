@@ -5,7 +5,6 @@ import HeroSection from "@/components/hero";
 import HowItWorksSection from "@/components/howitworks";
 import StatsSection from "@/components/stats";
 
-
 export default function Home() {
   return (
     <div>
@@ -17,6 +16,6 @@ export default function Home() {
       <HowItWorksSection />
       <FAQSection />
       <CTASection />
-   </div>
+    </div>
   );
 }

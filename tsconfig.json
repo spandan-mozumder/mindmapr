@@ -28,7 +28,9 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "app/(main)/resume/page.jsx"
-, "app/(main)/ai-cover-letter/[id]/page.jsx"  ],
+    "app/(main)/resume/page.jsx",
+    "app/(main)/ai-cover-letter/[id]/page.jsx",
+    "app/(main)/course/create-course/page.jsx"
+  ],
   "exclude": ["node_modules"]
 }

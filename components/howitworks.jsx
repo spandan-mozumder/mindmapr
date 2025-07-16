@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react";
 
-import { howItWorks } from '@/data/howitworks';
+import { howItWorks } from "@/data/howitworks";
 
 const HowItWorksSection = () => {
   return (
@@ -30,6 +30,6 @@ const HowItWorksSection = () => {
       </div>
     </section>
   );
-}
+};
 
-export default HowItWorksSection
+export default HowItWorksSection;

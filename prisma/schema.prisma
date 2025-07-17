@@ -25,6 +25,7 @@ model User {
   assessments Assessment[]
   resume      Resume?
   coverLetter CoverLetter[]
+  courseList  CourseList[]
 }
 
 model Assessment {
@@ -90,13 +91,28 @@ model IndustryInsight {
   @@index([industry])
 }
 
-enum DemandLevel{
+model CourseList {
+  id           String   @id @default(cuid())
+  name         String
+  category     String
+  level        String
+  courseOutput Json
+  createdAt    DateTime @default(now())
+  userId       String
+  includeVideo String   @default("No")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+enum DemandLevel {
   HIGH
   MEDIUM
   LOW
 }
 
-enum MarketOutlook{
+enum MarketOutlook {
   POSITIVE
   NEUTRAL
   NEGATIVE

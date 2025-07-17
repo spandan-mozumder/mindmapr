@@ -8,8 +8,13 @@ import TopicDescription from "./_components/description";
 import SelectOption from "./_components/option";
 import { UserInputContext } from "../../_context/userinputcontext";
 import callGeminiAPI from "@/configs/AIModel";
+import LoadingDialog from "./_components/loading"
+import {saveCourseLayoutInDB} from "@/actions/course"
+import { useRouter } from "next/navigation";
 
 export default function CreateCoursePage() {
+const router = useRouter()
+
   const StepperOptions = [
     {
       id: 1,
@@ -83,22 +88,28 @@ export default function CreateCoursePage() {
 
     try {
       setLoading(true);
-      const rawResponse = await callGeminiAPI(FINAL_PROMPT);
+     const rawResponse = await callGeminiAPI(FINAL_PROMPT);
 
-      const jsonString = rawResponse.replace(/```json\n|```/g, "");
+     const jsonString = rawResponse.replace(/```json\n|```/g, "");
 
       const courseData = JSON.parse(jsonString);
 
-      console.log("Successfully generated course data:", courseData);
+     console.log("Successfully generated course data:", courseData);
 
-      setLoading(false);
-
-      return courseData;
+     setLoading(false);
+      
+      const response = await saveCourseLayoutInDB(courseData, userCourseInput.displayVideo);
+      console.log("🧾 Saved course response:", response);
+      console.log("🧾 New course ID:", response?.id);
+      
+      router.push(`/course/create-course/${response.id}`);
     } catch (error) {
       console.error("Failed to generate course layout:", error);
       return null;
     }
   };
+
+
 
   return (
     <div>
@@ -157,6 +168,8 @@ export default function CreateCoursePage() {
           )}
         </div>
       </div>
+
+      <LoadingDialog loading={loading} />
     </div>
   );
 }

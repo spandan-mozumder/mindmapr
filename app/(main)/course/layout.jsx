@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import { BarLoader } from "react-spinners";
 
-const MainLayout = async ({ children }) => {
+export default function Layout({ children }) {
   return (
     <div>
       <div className="flex flex-row items-center justify-between">
@@ -16,6 +16,4 @@ const MainLayout = async ({ children }) => {
       </Suspense>
     </div>
   );
-};
-
-export default MainLayout;
+}

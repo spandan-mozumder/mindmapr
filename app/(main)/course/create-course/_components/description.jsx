@@ -16,8 +16,8 @@ export default function TopicDescription() {
   };
 
   return (
-    <div className="mx-20 lg:mx-44">
-      <div>
+    <div className="mx-20 lg:mx-44 flex flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <label>
           Write the topic for which you want to generatea course (e.g, - Video
           Editing, Python, Microsoft Excel)
@@ -29,7 +29,7 @@ export default function TopicDescription() {
         />
       </div>
 
-      <div>
+      <div className="flex flex-col gap-5">
         <label>
           Tell us more about your course, what you want to include in the course
           (Optional, but preferred for curated outcome)

@@ -23,14 +23,14 @@ export default function SelectOption() {
 
   return (
     <div className="px-10 md:px-110 lg:px-44">
-      <div className="grid grid-cols-2">
-        <div>
+      <div className="grid grid-cols-2 gap-15">
+        <div className="w-50 flex flex-col gap-2">
           <label className="text-sm">Difficulty Level</label>
           <Select
             defaultValue={userCourseInput?.level}
             onValueChange={(value) => handleInputChange("level", value)}
           >
-            <SelectTrigger className="">
+            <SelectTrigger className="w-50">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
 
@@ -42,13 +42,13 @@ export default function SelectOption() {
           </Select>
         </div>
 
-        <div>
+        <div className="w-50 flex flex-col gap-2">
           <label className="text-sm">Course Duration</label>
           <Select
             defaultValue={userCourseInput?.duration}
             onValueChange={(value) => handleInputChange("duration", value)}
           >
-            <SelectTrigger className="">
+            <SelectTrigger className="w-50">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
 
@@ -62,13 +62,13 @@ export default function SelectOption() {
           </Select>
         </div>
 
-        <div>
+        <div className="w-50 flex flex-col gap-2">
           <label className="text-sm">Add Video</label>
           <Select
             defaultValue={userCourseInput?.displayVideo}
             onValueChange={(value) => handleInputChange("displayVideo", value)}
           >
-            <SelectTrigger className="">
+            <SelectTrigger className="w-50">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
 
@@ -79,7 +79,7 @@ export default function SelectOption() {
           </Select>
         </div>
 
-        <div>
+        <div className="w-50 flex flex-col gap-2">
           <label className="text-sm">Number of Chapters</label>
           <Input
             type="number"

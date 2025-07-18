@@ -102,7 +102,7 @@ export async function updateCourseBasicInfo(courseId, { name, courseOutput }) {
 export async function updateChapterByIndex(
   courseId,
   chapterIndex,
-  updatedData
+  updatedData,
 ) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");

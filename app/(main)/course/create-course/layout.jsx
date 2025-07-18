@@ -4,7 +4,7 @@ import React, { Suspense, useState } from "react";
 import { UserInputContext } from "../../_context/userinputcontext";
 import { BarLoader } from "react-spinners";
 
-const MainLayout = ({ children }) => {
+export default function Layout({ children }) {
   const [userCourseInput, setUserCourseInput] = useState([]);
 
   return (
@@ -18,6 +18,4 @@ const MainLayout = ({ children }) => {
       </div>
     </UserInputContext.Provider>
   );
-};
-
-export default MainLayout;
+}

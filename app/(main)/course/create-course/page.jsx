@@ -7,13 +7,16 @@ import SelectCategory from "./_components/category";
 import TopicDescription from "./_components/description";
 import SelectOption from "./_components/option";
 import { UserInputContext } from "../../_context/userinputcontext";
-import callGeminiAPI from "@/configs/AIModel";
-import LoadingDialog from "./_components/loading"
-import {saveCourseLayoutInDB} from "@/actions/course"
+import GenerateCourseLayout from "@/configs/AIModel";
+import LoadingDialog from "./_components/loading";
+import { saveCourseLayoutInDB } from "@/actions/course";
 import { useRouter } from "next/navigation";
 
 export default function CreateCoursePage() {
-const router = useRouter()
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const { userCourseInput, setUserCourseInput } = useContext(UserInputContext);
+  const [loading, setLoading] = React.useState(false);
+  const router = useRouter();
 
   const StepperOptions = [
     {
@@ -32,10 +35,6 @@ const router = useRouter()
       icon: <ClipboardPen />,
     },
   ];
-
-  const [activeIndex, setActiveIndex] = React.useState(0);
-
-  const { userCourseInput, setUserCourseInput } = useContext(UserInputContext);
 
   const checkStatus = () => {
     if (userCourseInput?.length == 0) {
@@ -66,8 +65,6 @@ const router = useRouter()
     return false;
   };
 
-  const [loading, setLoading] = React.useState(false);
-
   const generateCourseLayout = async () => {
     const BASIC_PROMPT =
       "Generate a course tutorial on following detail with field as Course Name, Description, Along with Chapter Name, About, Duration";
@@ -88,20 +85,14 @@ const router = useRouter()
 
     try {
       setLoading(true);
-     const rawResponse = await callGeminiAPI(FINAL_PROMPT);
-
-     const jsonString = rawResponse.replace(/```json\n|```/g, "");
-
+      const rawResponse = await GenerateCourseLayout(FINAL_PROMPT);
+      const jsonString = rawResponse.replace(/```json\n|```/g, "");
       const courseData = JSON.parse(jsonString);
-
-     console.log("Successfully generated course data:", courseData);
-
-     setLoading(false);
-      
-      const response = await saveCourseLayoutInDB(courseData, userCourseInput.displayVideo);
-      console.log("🧾 Saved course response:", response);
-      console.log("🧾 New course ID:", response?.id);
-      
+      setLoading(false);
+      const response = await saveCourseLayoutInDB(
+        courseData,
+        userCourseInput.displayVideo,
+      );
       router.push(`/course/create-course/${response.id}`);
     } catch (error) {
       console.error("Failed to generate course layout:", error);
@@ -109,13 +100,11 @@ const router = useRouter()
     }
   };
 
-
-
   return (
-    <div>
+    <div className="w-full flex flex-col h-[35rem] items-center justify-between gap-10 p-10">
       <div className="flex justify-center items-center mt-10">
         {StepperOptions.map((item, index) => (
-          <div className="flex flex-row items-center">
+          <div key={index} className="flex flex-row items-center">
             <div className="flex flex-col items-center gap-1 w-[50px] md:w-[150px]">
               <div
                 className={`p-3 rounded-full bg-secondary text-foreground ${activeIndex >= index && "bg-white text-secondary"}`}
@@ -135,38 +124,38 @@ const router = useRouter()
         ))}
       </div>
 
-      <div className="px-10 md:px-20 lg:px-44 mt-10">
+      <div className="">
         {activeIndex == 0 ? <SelectCategory /> : null}
         {activeIndex == 1 ? <TopicDescription /> : null}
         {activeIndex == 2 ? <SelectOption /> : null}
+      </div>
 
-        <div className="flex flex-row justify-between mt-10">
+      <div className="w-full flex justify-between md:px-30 ">
+        <Button
+          variant="secondary"
+          onClick={() => setActiveIndex(activeIndex - 1)}
+          disabled={activeIndex == 0}
+        >
+          Previous
+        </Button>
+        {activeIndex < 2 && (
           <Button
+            disabled={checkStatus()}
             variant="secondary"
-            onClick={() => setActiveIndex(activeIndex - 1)}
-            disabled={activeIndex == 0}
+            onClick={() => setActiveIndex(activeIndex + 1)}
           >
-            Previous
+            Next
           </Button>
-          {activeIndex < 2 && (
-            <Button
-              disabled={checkStatus()}
-              variant="secondary"
-              onClick={() => setActiveIndex(activeIndex + 1)}
-            >
-              Next
-            </Button>
-          )}
-          {activeIndex == 2 && (
-            <Button
-              disabled={checkStatus()}
-              variant="outline"
-              onClick={() => generateCourseLayout()}
-            >
-              Generate Course Layout
-            </Button>
-          )}
-        </div>
+        )}
+        {activeIndex == 2 && (
+          <Button
+            disabled={checkStatus()}
+            variant="outline"
+            onClick={() => generateCourseLayout()}
+          >
+            Generate Course Layout
+          </Button>
+        )}
       </div>
 
       <LoadingDialog loading={loading} />

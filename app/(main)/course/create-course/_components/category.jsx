@@ -33,8 +33,8 @@ export default function CategoryList() {
 
   return (
     <div>
-      <h2>Select the Course Category</h2>
-      <div className="flex flex-col md:flex-row justify-between items-center gap-10 md:gap-20">
+      <h2 className="m-5">Select the Course Category</h2>
+      <div className="flex flex-col md:flex-row justify-between items-center gap-5 md:gap-20">
         {CategoryList.map((item, index) => (
           <Card
             className={`flex flex-col w-50 justify-center items-center hover:scale-[102%] ${userCourseInput?.category == item.name && "scale-[102%] bg-primary text-secondary"}`}

@@ -1,37 +1,59 @@
-"use client"
+"use client";
 
-import { CircleCheckBig, Clock } from 'lucide-react'
-import React, { useState } from 'react'
-import EditChapter from './edit-chapter';
+import { CircleCheck, Clock } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import EditChapter from "./edit-chapter";
+import { Button } from "@/components/ui/button";
 
-export default function ChapterList({ course, setCourse }) {
-    const [courseData, setCourseData] = useState(course);
+export default function ChapterList({ course }) {
+  const [courseData, setCourseData] = useState(course);
 
+  useEffect(() => {
+    setCourseData(course);
+  }, [course]);
+
+  const chapters = courseData?.courseOutput?.Chapters;
+
+  if (!chapters || chapters.length === 0) {
     return (
-        <div className='mt-3'>
-            <h2>Chapters</h2>
-            <div className='mt-2'>
-                {courseData?.courseOutput?.Chapters?.map((chapter, index) => (
-                    <div className='border p-5 rounded-lg mb-2 flex item-center justify-center'>
-                        <div key={index} className="flex gap-5 items-center">
-                            <h2 className="bg-secondary h-10 w-10 flex-nowrap text-white rounded-full text-center p-2">{index + 1}</h2>
-                            <div>
-                                <h2 className="font-medium text-lg">{chapter.ChapterName} <EditChapter
-                                    courseId={course.id}
-                                    chapter={chapter}
-                                    index={index}
-                                    setCourse={setCourseData}
-                                /></h2>
-                                <p className="text-sm text-gray-500"> {chapter.About}</p>
-                                <p className="flex gap-2 items-center"><Clock />{chapter.Duration}</p>
-                            </div>
-                        </div>
-                        <div>
-                            <CircleCheckBig className='text-2xl text-gray-600 h-20 w-20 flex-none' />
-                        </div>
-                    </div>
-                ))}
+      <div className="p-5 text-center text-muted">
+        <p>No chapters found for this course.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-3">
+      <h2 className="p-5 text-xl">Chapters</h2>
+      <div className="mt-2 flex flex-col gap-5">
+        {chapters.map((chapter, index) => (
+          <div
+            key={index}
+            className="border p-7 rounded-lg mb-2 flex items-center justify-between gap-5"
+          >
+            <div className="flex gap-5 items-start">
+              <div className="flex flex-col gap-3">
+                <h2 className="font-medium text-lg flex items-center gap-2">
+                  {chapter.ChapterName}
+                  <EditChapter
+                    courseId={course.id}
+                    chapter={chapter}
+                    index={index}
+                    setCourse={setCourseData}
+                  />
+                </h2>
+                <p className="text-sm text-gray-500">{chapter.About}</p>
+                <p className="flex gap-2 items-center text-sm text-muted-foreground">
+                  <Clock className="w-4 h-4" /> {chapter.Duration}
+                </p>
+              </div>
             </div>
-        </div>
-    )
+            <Button variant="outline">
+              <CircleCheck className="w-5 h-5" />
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }

@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 
-export default async function callGeminiAPI(promptText) {
+export default async function GenerateCourseLayout(promptText) {
   const ai = new GoogleGenAI({
     apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
   });

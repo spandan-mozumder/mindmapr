@@ -102,7 +102,7 @@ export async function updateCourseBasicInfo(courseId, { name, courseOutput }) {
 export async function updateChapterByIndex(
   courseId,
   chapterIndex,
-  updatedData,
+  updatedData
 ) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
@@ -150,4 +150,81 @@ export async function updateChapterByIndex(
   });
 
   return true;
+}
+
+export async function updatePublishedCourse(courseId) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  const updatedCourse = await db.courseList.update({
+    where: {
+      id: courseId,
+      userId: user.id,
+    },
+    data: {
+      isPublished: "Yes",
+    },
+  });
+
+  if (!updatedCourse) {
+    throw new Error("Failed to update course");
+  }
+  return updatedCourse;
+}
+
+export async function getCoursesByUserId() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  try {
+    const courses = await db.courseList.findMany({
+      where: {
+        userId: user.id,
+      },
+      include: {
+        chapters: true, // include related chapters if needed
+      },
+      orderBy: {
+        createdAt: "desc", // optional: newest first
+      },
+    });
+    return courses;
+    
+  } catch (error) {
+    console.error("Error fetching courses for user:", error);
+    throw new Error("Unable to fetch courses");
+  }
+}
+
+export async function deleteCourseById(courseId) {
+  try {
+    await db.chapter.deleteMany({
+      where: {
+        courseId: courseId,
+      },
+    });
+
+    await db.courseList.delete({
+      where: {
+        id: courseId,
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete course and chapters:", error);
+    return { success: false, error: "Delete failed. Check server logs." };
+  }
 }

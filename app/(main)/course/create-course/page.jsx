@@ -7,7 +7,7 @@ import SelectCategory from "./_components/category";
 import TopicDescription from "./_components/description";
 import SelectOption from "./_components/option";
 import { UserInputContext } from "../../_context/userinputcontext";
-import GenerateCourseLayout from "@/configs/AIModel";
+import {GenerateCourseLayout} from "@/configs/AIModel";
 import LoadingDialog from "./_components/loading";
 import { saveCourseLayoutInDB } from "@/actions/course";
 import { useRouter } from "next/navigation";

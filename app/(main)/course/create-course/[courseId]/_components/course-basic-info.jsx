@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import EditCourseBasicInfo from "./edit-course-basic-info";
 import coursebanner from "@/assets/coursebanner.png";
 
-export default function CourseBasicInfo({ course }) {
+export default function CourseBasicInfo({ course, edit = true }) {
   const [courseData, setCourseData] = useState(course);
 
   return (
@@ -15,7 +15,12 @@ export default function CourseBasicInfo({ course }) {
       <div className="grid gird-cols-1 md:grid-cols-2 gap-5">
         <div className="flex flex-col gap-3">
           <h2 className="font-bold text-2xl">{course?.name}</h2>
-          <EditCourseBasicInfo course={courseData} setCourse={setCourseData} />
+          {edit && (
+            <EditCourseBasicInfo
+              course={courseData}
+              setCourse={setCourseData}
+            />
+          )}
           <p className="text-sm text-gray-400 mt-3">
             {course?.courseOutput?.Description}
           </p>

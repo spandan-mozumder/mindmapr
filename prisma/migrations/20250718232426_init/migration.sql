@@ -80,6 +80,32 @@ CREATE TABLE "IndustryInsight" (
     CONSTRAINT "IndustryInsight_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "CourseList" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "category" TEXT NOT NULL,
+    "level" TEXT NOT NULL,
+    "courseOutput" JSONB NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userId" TEXT NOT NULL,
+    "includeVideo" TEXT NOT NULL DEFAULT 'No',
+    "isPublished" TEXT NOT NULL DEFAULT 'No',
+
+    CONSTRAINT "CourseList_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Chapter" (
+    "id" TEXT NOT NULL,
+    "courseId" TEXT NOT NULL,
+    "chapterId" INTEGER NOT NULL,
+    "content" JSONB NOT NULL,
+    "videoId" TEXT,
+
+    CONSTRAINT "Chapter_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_clerkUserId_key" ON "User"("clerkUserId");
 
@@ -101,6 +127,12 @@ CREATE UNIQUE INDEX "IndustryInsight_industry_key" ON "IndustryInsight"("industr
 -- CreateIndex
 CREATE INDEX "IndustryInsight_industry_idx" ON "IndustryInsight"("industry");
 
+-- CreateIndex
+CREATE INDEX "CourseList_userId_idx" ON "CourseList"("userId");
+
+-- CreateIndex
+CREATE INDEX "Chapter_courseId_idx" ON "Chapter"("courseId");
+
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_industry_fkey" FOREIGN KEY ("industry") REFERENCES "IndustryInsight"("industry") ON DELETE SET NULL ON UPDATE CASCADE;
 
@@ -112,3 +144,9 @@ ALTER TABLE "Resume" ADD CONSTRAINT "Resume_userId_fkey" FOREIGN KEY ("userId") 
 
 -- AddForeignKey
 ALTER TABLE "CoverLetter" ADD CONSTRAINT "CoverLetter_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CourseList" ADD CONSTRAINT "CourseList_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Chapter" ADD CONSTRAINT "Chapter_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "CourseList"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import EditChapter from "./edit-chapter";
 import { Button } from "@/components/ui/button";
 
-export default function ChapterList({ course }) {
+export default function ChapterList({ course, edit = false }) {
   const [courseData, setCourseData] = useState(course);
 
   useEffect(() => {
@@ -35,12 +35,14 @@ export default function ChapterList({ course }) {
               <div className="flex flex-col gap-3">
                 <h2 className="font-medium text-lg flex items-center gap-2">
                   {chapter.ChapterName}
-                  <EditChapter
-                    courseId={course.id}
-                    chapter={chapter}
-                    index={index}
-                    setCourse={setCourseData}
-                  />
+                  {edit && (
+                    <EditChapter
+                      courseId={course.id}
+                      chapter={chapter}
+                      index={index}
+                      setCourse={setCourseData}
+                    />
+                  )}
                 </h2>
                 <p className="text-sm text-gray-500">{chapter.About}</p>
                 <p className="flex gap-2 items-center text-sm text-muted-foreground">

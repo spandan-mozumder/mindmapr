@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("NEXT_PUBLIC_DATABASE_URL")
 }
 
 model User {
@@ -100,10 +100,26 @@ model CourseList {
   createdAt    DateTime @default(now())
   userId       String
   includeVideo String   @default("No")
+  isPublished  String  @default("No")
 
   user User @relation(fields: [userId], references: [id])
 
+  chapters Chapter[]
+
   @@index([userId])
+}
+
+model Chapter {
+  id        String  @id @default(cuid())
+  courseId  String
+  chapterId Int
+  content   Json
+  videoId   String?
+
+
+  course CourseList @relation(fields: [courseId], references: [id])
+
+  @@index([courseId])
 }
 
 enum DemandLevel {

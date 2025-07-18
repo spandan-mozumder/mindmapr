@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 
-export default async function GenerateCourseLayout(promptText) {
+export async function GenerateCourseLayout(promptText) {
   const ai = new GoogleGenAI({
     apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
   });
@@ -89,6 +89,55 @@ Category: Programming, Topic: Python, Level: Basic, Duration: 1 hours, NoOfChapt
         fullResponse += chunk.text;
       }
     }
+    return fullResponse;
+  } catch (error) {
+    console.error("An error occurred while calling the Gemini API:", error);
+    throw error;
+  }
+}
+
+export async function GenerateChapterContent(topicPrompt) {
+  const ai = new GoogleGenAI({
+    apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
+  });
+
+  const model = "gemini-2.0-flash-lite";
+
+  const schemaPrompt = `Here is the schema that your response must follow. Do not include any extra text or markdown. Respond ONLY with an array of JSON objects in this schema format.`;
+
+  const schema = [
+    {
+      title: "The title...",
+      explanation:
+        "You can run Python code in two main ways. One is through the interactive interpreter... Save it as a `.py` file (e.g., `hello.py`).",
+      Code: `<precode>\nprint("Hello, World!")\n</precode>`,
+    },
+  ];
+
+  const promptInstruction = `Now generate chapter content for the particular chapter. Make sure the output strictly follows the above schema.`;
+
+  try {
+    const responseStream = await ai.models.generateContentStream({
+      model,
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { text: topicPrompt },
+            { text: schemaPrompt + JSON.stringify(schema) },
+            { text: promptInstruction },
+          ],
+        },
+      ],
+    });
+
+    let fullResponse = "";
+    for await (const chunk of responseStream) {
+      if (chunk.text) {
+        fullResponse += chunk.text;
+      }
+    }
+
     return fullResponse;
   } catch (error) {
     console.error("An error occurred while calling the Gemini API:", error);

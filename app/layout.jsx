@@ -12,6 +12,9 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata = {
   title: 'AI Career Coach',
   description: 'Your AI Career Consultant',
+  icons:{
+    icon: "public/favicon.ico",
+  }
 };
 
 export default function RootLayout({ children }) {

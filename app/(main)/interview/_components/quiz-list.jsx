@@ -1,23 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { format } from "date-fns";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import QuizResult from "./quiz-result";
+import { useState } from 'react';
+import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import QuizResult from './quiz-result';
 
 export default function QuizList({ assessments }) {
   const router = useRouter();
@@ -29,16 +18,10 @@ export default function QuizList({ assessments }) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="gradient-title text-3xl md:text-4xl">
-                Recent Quizzes
-              </CardTitle>
-              <CardDescription>
-                Review your past quiz performance
-              </CardDescription>
+              <CardTitle className="gradient-title text-3xl md:text-4xl">Recent Quizzes</CardTitle>
+              <CardDescription>Review your past quiz performance</CardDescription>
             </div>
-            <Button onClick={() => router.push("/interview/mock")}>
-              Start New Quiz
-            </Button>
+            <Button onClick={() => router.push('/interview/mock')}>Start New Quiz</Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -50,24 +33,15 @@ export default function QuizList({ assessments }) {
                 onClick={() => setSelectedQuiz(assessment)}
               >
                 <CardHeader>
-                  <CardTitle className="gradient-title text-2xl">
-                    Quiz {i + 1}
-                  </CardTitle>
+                  <CardTitle className="gradient-title text-2xl">Quiz {i + 1}</CardTitle>
                   <CardDescription className="flex justify-between w-full">
                     <div>Score: {assessment.quizScore.toFixed(1)}%</div>
-                    <div>
-                      {format(
-                        new Date(assessment.createdAt),
-                        "MMMM dd, yyyy HH:mm",
-                      )}
-                    </div>
+                    <div>{format(new Date(assessment.createdAt), 'MMMM dd, yyyy HH:mm')}</div>
                   </CardDescription>
                 </CardHeader>
                 {assessment.improvementTip && (
                   <CardContent>
-                    <p className="text-sm text-muted-foreground">
-                      {assessment.improvementTip}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{assessment.improvementTip}</p>
                   </CardContent>
                 )}
               </Card>
@@ -84,7 +58,7 @@ export default function QuizList({ assessments }) {
           <QuizResult
             result={selectedQuiz}
             hideStartNew
-            onStartNew={() => router.push("/interview/mock")}
+            onStartNew={() => router.push('/interview/mock')}
           />
         </DialogContent>
       </Dialog>

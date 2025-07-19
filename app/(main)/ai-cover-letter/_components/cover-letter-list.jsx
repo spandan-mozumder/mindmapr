@@ -1,17 +1,11 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { format } from "date-fns";
-import { Edit2, Eye, Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useRouter } from 'next/navigation';
+import { format } from 'date-fns';
+import { Edit2, Eye, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,8 +16,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { deleteCoverLetter } from "@/actions/cover-letter";
+} from '@/components/ui/alert-dialog';
+import { deleteCoverLetter } from '@/actions/cover-letter';
 
 export default function CoverLetterList({ coverLetters }) {
   const router = useRouter();
@@ -31,10 +25,10 @@ export default function CoverLetterList({ coverLetters }) {
   const handleDelete = async (id) => {
     try {
       await deleteCoverLetter(id);
-      toast.success("Cover letter deleted successfully!");
+      toast.success('Cover letter deleted successfully!');
       router.refresh();
     } catch (error) {
-      toast.error(error.message || "Failed to delete cover letter");
+      toast.error(error.message || 'Failed to delete cover letter');
     }
   };
 
@@ -43,9 +37,7 @@ export default function CoverLetterList({ coverLetters }) {
       <Card>
         <CardHeader>
           <CardTitle>No Cover Letters Yet</CardTitle>
-          <CardDescription>
-            Create your first cover letter to get started
-          </CardDescription>
+          <CardDescription>Create your first cover letter to get started</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -62,7 +54,7 @@ export default function CoverLetterList({ coverLetters }) {
                   {letter.jobTitle} at {letter.companyName}
                 </CardTitle>
                 <CardDescription>
-                  Created {format(new Date(letter.createdAt), "PPP")}
+                  Created {format(new Date(letter.createdAt), 'PPP')}
                 </CardDescription>
               </div>
               <div className="flex space-x-2">
@@ -83,9 +75,8 @@ export default function CoverLetterList({ coverLetters }) {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete Cover Letter?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete your cover letter for {letter.jobTitle} at{" "}
-                        {letter.companyName}.
+                        This action cannot be undone. This will permanently delete your cover letter
+                        for {letter.jobTitle} at {letter.companyName}.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

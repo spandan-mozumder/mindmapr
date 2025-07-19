@@ -1,18 +1,18 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI } from '@google/genai';
 
 export async function GenerateCourseLayout(promptText) {
   const ai = new GoogleGenAI({
     apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
   });
 
-  const model = "gemini-2.0-flash-lite";
+  const model = 'gemini-2.0-flash-lite';
   const config = {
-    responseMimeType: "text/plain",
+    responseMimeType: 'text/plain',
   };
 
   const contents = [
     {
-      role: "user",
+      role: 'user',
       parts: [
         {
           text: `Generate a course tutorial on following detail with field as Course Name, Description, Along with Chapter Name, About, Duration:
@@ -22,7 +22,7 @@ Category: Programming, Topic: Python, Level: Basic, Duration: 1 hours, NoOfChapt
       ],
     },
     {
-      role: "model",
+      role: 'model',
       parts: [
         {
           text: `\`\`\`json
@@ -67,7 +67,7 @@ Category: Programming, Topic: Python, Level: Basic, Duration: 1 hours, NoOfChapt
       ],
     },
     {
-      role: "user",
+      role: 'user',
       parts: [
         {
           text: promptText,
@@ -83,7 +83,7 @@ Category: Programming, Topic: Python, Level: Basic, Duration: 1 hours, NoOfChapt
       contents,
     });
 
-    let fullResponse = "";
+    let fullResponse = '';
     for await (const chunk of responseStream) {
       if (chunk.text) {
         fullResponse += chunk.text;
@@ -91,7 +91,7 @@ Category: Programming, Topic: Python, Level: Basic, Duration: 1 hours, NoOfChapt
     }
     return fullResponse;
   } catch (error) {
-    console.error("An error occurred while calling the Gemini API:", error);
+    console.error('An error occurred while calling the Gemini API:', error);
     throw error;
   }
 }
@@ -101,15 +101,15 @@ export async function GenerateChapterContent(topicPrompt) {
     apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
   });
 
-  const model = "gemini-2.0-flash-lite";
+  const model = 'gemini-2.0-flash-lite';
 
   const schemaPrompt = `Here is the schema that your response must follow. Do not include any extra text or markdown. Respond ONLY with an array of JSON objects in this schema format.`;
 
   const schema = [
     {
-      title: "The title...",
+      title: 'The title...',
       explanation:
-        "You can run Python code in two main ways. One is through the interactive interpreter... Save it as a `.py` file (e.g., `hello.py`).",
+        'You can run Python code in two main ways. One is through the interactive interpreter... Save it as a `.py` file (e.g., `hello.py`).',
       Code: `<precode>\nprint("Hello, World!")\n</precode>`,
     },
   ];
@@ -121,7 +121,7 @@ export async function GenerateChapterContent(topicPrompt) {
       model,
       contents: [
         {
-          role: "user",
+          role: 'user',
           parts: [
             { text: topicPrompt },
             { text: schemaPrompt + JSON.stringify(schema) },
@@ -131,7 +131,7 @@ export async function GenerateChapterContent(topicPrompt) {
       ],
     });
 
-    let fullResponse = "";
+    let fullResponse = '';
     for await (const chunk of responseStream) {
       if (chunk.text) {
         fullResponse += chunk.text;
@@ -140,7 +140,7 @@ export async function GenerateChapterContent(topicPrompt) {
 
     return fullResponse;
   } catch (error) {
-    console.error("An error occurred while calling the Gemini API:", error);
+    console.error('An error occurred while calling the Gemini API:', error);
     throw error;
   }
 }

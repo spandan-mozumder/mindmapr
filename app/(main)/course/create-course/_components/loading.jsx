@@ -5,8 +5,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Disc3 } from "lucide-react";
+} from '@/components/ui/alert-dialog';
+import { Disc3 } from 'lucide-react';
 
 export default function LoadingDialog({ loading }) {
   return (
@@ -15,9 +15,7 @@ export default function LoadingDialog({ loading }) {
         <AlertDialogHeader>
           <AlertDialogDescription className="flex flex-col justify-center items-center gap-5 w-auto py-10">
             <Disc3 className="animate-spin w-15 h-15" />
-            <h1 className="text-xl">
-              Please wait... AI is working on your course
-            </h1>
+            <h1 className="text-xl">Please wait... AI is working on your course</h1>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter></AlertDialogFooter>

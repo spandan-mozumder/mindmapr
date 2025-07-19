@@ -1,17 +1,13 @@
-import React, { Suspense } from "react";
-import { BarLoader } from "react-spinners";
+import { Suspense } from 'react';
+import { BarLoader } from 'react-spinners';
 
 export default function Layout({ children }) {
   return (
-    <div>
+    <div className="px-5">
       <div className="flex flex-row items-center justify-between">
-        <h1 className="font-bold gradient-title text-5xl md:text-6xl">
-          Create Course
-        </h1>
+        <h1 className="font-bold gradient-title text-5xl md:text-6xl">Create Course</h1>
       </div>
-      <Suspense
-        fallback={<BarLoader className="mt-4" width={"100%"} color="gray" />}
-      >
+      <Suspense fallback={<BarLoader className="mt-4" width="100%" color="gray" />}>
         {children}
       </Suspense>
     </div>

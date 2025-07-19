@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { CircleCheck, Clock } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import EditChapter from "./edit-chapter";
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from 'react';
+import { CircleCheck, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import EditChapter from './edit-chapter';
 
 export default function ChapterList({ course, edit = false }) {
   const [courseData, setCourseData] = useState(course);

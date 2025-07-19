@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import React, { useEffect, useRef } from "react";
-import banner from "@/assets/banner.png";
-import { Button } from "./ui/button";
-import Image from "next/image";
+import Link from 'next/link';
+import React, { useEffect, useRef } from 'react';
+import banner from '@/assets/banner.png';
+import { Button } from './ui/button';
+import Image from 'next/image';
 
 const HeroSection = () => {
   const imageRef = useRef(null);
@@ -17,14 +17,14 @@ const HeroSection = () => {
       const scrollThreshold = 100;
 
       if (scrollPosition > scrollThreshold) {
-        imageElement.classList.add("scrolled");
+        imageElement.classList.add('scrolled');
       } else {
-        imageElement.classList.remove("scrolled");
+        imageElement.classList.remove('scrolled');
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
@@ -37,8 +37,8 @@ const HeroSection = () => {
             Professional Success
           </h1>
           <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">
-            Advance your career with peronalized guidance, interview prep, and
-            AI-powered tools for job success.
+            Advance your career with peronalized guidance, interview prep, and AI-powered tools for
+            job success.
           </p>
         </div>
 

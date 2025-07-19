@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Trash } from "lucide-react";
+} from '@/components/ui/dropdown-menu';
+import { Trash } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +16,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 
 export default function DropdownDelete({ children, handleDelete }) {
   const [open, setOpen] = React.useState(false);
@@ -26,10 +26,7 @@ export default function DropdownDelete({ children, handleDelete }) {
       <DropdownMenu>
         <DropdownMenuTrigger>{children}</DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem
-            className={"text-red-600"}
-            onClick={() => setOpen(true)}
-          >
+          <DropdownMenuItem className={'text-red-600'} onClick={() => setOpen(true)}>
             <Trash /> Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -41,9 +38,7 @@ export default function DropdownDelete({ children, handleDelete }) {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setOpen(false)}>
-              Cancel
-            </AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setOpen(false)}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 handleDelete();

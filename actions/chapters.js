@@ -1,15 +1,10 @@
-"use server";
+'use server';
 
-import { db } from "@/lib/prisma";
+import { db } from '@/lib/prisma';
 
-export async function saveChapterToDB({
-  courseId,
-  chapterId,
-  content,
-  videoId,
-}) {
+export async function saveChapterToDB({ courseId, chapterId, content, videoId }) {
   try {
-    const saved = await db.chapter.create({
+    const chapter = await db.chapter.create({
       data: {
         courseId,
         chapterId,
@@ -17,9 +12,27 @@ export async function saveChapterToDB({
         videoId,
       },
     });
-    return { success: true, data: saved };
+    return { success: true, data: chapter };
   } catch (error) {
-    console.error("❌ Error saving chapter to DB:", error);
+    console.error('Error saving chapter:', error);
     return { success: false, error };
+  }
+}
+
+export async function getChapter({ courseId, chapterId }) {
+  try {
+    const chapter = await db.chapter.findFirst({
+      where: {
+        courseId,
+        chapterId,
+      },
+    });
+
+    if (!chapter) throw new Error('Chapter not found');
+
+    return chapter;
+  } catch (error) {
+    console.error('Error fetching chapter:', error);
+    throw new Error('Failed to fetch chapter');
   }
 }

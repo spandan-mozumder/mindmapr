@@ -1,5 +1,5 @@
 export function entriesToMarkdown(entries, type) {
-  if (!entries?.length) return "";
+  if (!entries?.length) return '';
 
   return (
     `## ${type}\n\n` +
@@ -10,6 +10,6 @@ export function entriesToMarkdown(entries, type) {
           : `${entry.startDate} - ${entry.endDate}`;
         return `### ${entry.title} @ ${entry.organization}\n${dateRange}\n\n${entry.description}`;
       })
-      .join("\n\n")
+      .join('\n\n')
   );
 }

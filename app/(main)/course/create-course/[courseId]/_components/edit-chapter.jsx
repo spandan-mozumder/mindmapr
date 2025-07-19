@@ -1,6 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { Pencil } from 'lucide-react';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogTrigger,
@@ -10,12 +12,11 @@ import {
   DialogFooter,
   DialogClose,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
-import { getCourseById, updateChapterByIndex } from "@/actions/course";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { getCourseById, updateChapterByIndex } from '@/actions/course';
 
 export default function EditChapter({ courseId, chapter, index, setCourse }) {
   const [chapterName, setChapterName] = useState(chapter.ChapterName);
@@ -33,7 +34,7 @@ export default function EditChapter({ courseId, chapter, index, setCourse }) {
       const updated = await getCourseById(courseId);
       if (updated) setCourse(updated);
     } catch (err) {
-      console.error("Failed to update chapter:", err);
+      toast.error('Failed to update chapter');
     }
   };
 
@@ -47,31 +48,20 @@ export default function EditChapter({ courseId, chapter, index, setCourse }) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Chapter {index + 1}</DialogTitle>
-          <DialogDescription>
-            Make changes to the chapter content.
-          </DialogDescription>
+          <DialogDescription>Make changes to the chapter content.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 mt-2">
           <div>
             <label className="text-sm">Chapter Name</label>
-            <Input
-              value={chapterName}
-              onChange={(e) => setChapterName(e.target.value)}
-            />
+            <Input value={chapterName} onChange={(e) => setChapterName(e.target.value)} />
           </div>
           <div>
             <label className="text-sm">About</label>
-            <Textarea
-              value={about}
-              onChange={(e) => setAbout(e.target.value)}
-            />
+            <Textarea value={about} onChange={(e) => setAbout(e.target.value)} />
           </div>
           <div>
             <label className="text-sm">Duration</label>
-            <Input
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-            />
+            <Input value={duration} onChange={(e) => setDuration(e.target.value)} />
           </div>
         </div>
         <DialogFooter>

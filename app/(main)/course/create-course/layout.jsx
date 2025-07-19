@@ -1,21 +1,18 @@
-"use client";
+'use client';
 
-import React, { Suspense, useState } from "react";
-import { UserInputContext } from "../../_context/userinputcontext";
-import { BarLoader } from "react-spinners";
+import React, { useState, Suspense } from 'react';
+import { BarLoader } from 'react-spinners';
+
+import { UserInputContext } from '../../_context/userinputcontext';
 
 export default function Layout({ children }) {
   const [userCourseInput, setUserCourseInput] = useState([]);
 
   return (
     <UserInputContext.Provider value={{ userCourseInput, setUserCourseInput }}>
-      <div className="flex flex-col justify-center items-center">
-        <Suspense
-          fallback={<BarLoader className="mt-4" width={"100%"} color="gray" />}
-        >
-          {children}
-        </Suspense>
-      </div>
+      <Suspense fallback={<BarLoader color="gray" width="100%" className="mt-4" />}>
+        {children}
+      </Suspense>
     </UserInputContext.Provider>
   );
 }

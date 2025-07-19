@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -115,11 +115,7 @@
 @layer base {
   * {
     border-color: var(--color-border, #e5e7eb);
-    outline-color: color-mix(
-      in srgb,
-      var(--color-ring, #6366f1) 50%,
-      transparent
-    );
+    outline-color: color-mix(in srgb, var(--color-ring, #6366f1) 50%, transparent);
   }
   body {
     background-color: var(--color-background, #fff);
@@ -176,7 +172,7 @@ body {
 }
 
 .grid-background::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;

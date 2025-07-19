@@ -1,5 +1,5 @@
-import React from "react";
-import { Button } from "./ui/button";
+import React from 'react';
+import { Button } from './ui/button';
 import {
   PenBox,
   LayoutDashboard,
@@ -9,18 +9,18 @@ import {
   StarsIcon,
   BrainCircuit,
   Bot,
-} from "lucide-react";
-import Link from "next/link";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+} from 'lucide-react';
+import Link from 'next/link';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Image from "next/image";
-import logo from "@/assets/logo.png";
-import { checkUser } from "@/lib/checkUser";
+} from '@/components/ui/dropdown-menu';
+import Image from 'next/image';
+import logo from '@/assets/logo.png';
+import { checkUser } from '@/lib/checkUser';
 
 export default async function Header() {
   await checkUser();
@@ -41,10 +41,7 @@ export default async function Header() {
         <div className="flex items-center space-x-2 md:space-x-4">
           <SignedIn>
             <Link href="/dashboard">
-              <Button
-                variant="outline"
-                className="hidden md:inline-flex items-center gap-2"
-              >
+              <Button variant="outline" className="hidden md:inline-flex items-center gap-2">
                 <LayoutDashboard className="h-4 w-4" />
                 Industry Insights
               </Button>
@@ -69,10 +66,7 @@ export default async function Header() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link
-                    href="/ai-cover-letter"
-                    className="flex items-center gap-2"
-                  >
+                  <Link href="/ai-cover-letter" className="flex items-center gap-2">
                     <PenBox className="h-4 w-4" />
                     Cover Letter
                   </Link>
@@ -109,9 +103,9 @@ export default async function Header() {
             <UserButton
               appearance={{
                 elements: {
-                  avatarBox: "w-10 h-10",
-                  userButtonPopoverCard: "shadow-xl",
-                  userPreviewMainIdentifier: "font-semibold",
+                  avatarBox: 'w-10 h-10',
+                  userButtonPopoverCard: 'shadow-xl',
+                  userPreviewMainIdentifier: 'font-semibold',
                 },
               }}
               afterSignOutUrl="/"

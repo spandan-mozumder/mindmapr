@@ -1,29 +1,23 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { format, parse } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { entrySchema } from "@/app/lib/schema";
-import { Sparkles, PlusCircle, X, Pencil, Save, Loader2 } from "lucide-react";
-import { improveWithAI } from "@/actions/resume";
-import { toast } from "sonner";
-import useFetch from "@/hooks/use-fetch";
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { format, parse } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { entrySchema } from '@/app/lib/schema';
+import { Sparkles, PlusCircle, X, Pencil, Save, Loader2 } from 'lucide-react';
+import { improveWithAI } from '@/actions/resume';
+import { toast } from 'sonner';
+import useFetch from '@/hooks/use-fetch';
 
 const formatDisplayDate = (dateString) => {
-  if (!dateString) return "";
-  const date = parse(dateString, "yyyy-MM", new Date());
-  return format(date, "MMM yyyy");
+  if (!dateString) return '';
+  const date = parse(dateString, 'yyyy-MM', new Date());
+  return format(date, 'MMM yyyy');
 };
 
 export function EntryForm({ type, entries, onChange }) {
@@ -39,22 +33,22 @@ export function EntryForm({ type, entries, onChange }) {
   } = useForm({
     resolver: zodResolver(entrySchema),
     defaultValues: {
-      title: "",
-      organization: "",
-      startDate: "",
-      endDate: "",
-      description: "",
+      title: '',
+      organization: '',
+      startDate: '',
+      endDate: '',
+      description: '',
       current: false,
     },
   });
 
-  const current = watch("current");
+  const current = watch('current');
 
   const handleAdd = handleValidation((data) => {
     const formattedEntry = {
       ...data,
       startDate: formatDisplayDate(data.startDate),
-      endDate: data.current ? "" : formatDisplayDate(data.endDate),
+      endDate: data.current ? '' : formatDisplayDate(data.endDate),
     };
 
     onChange([...entries, formattedEntry]);
@@ -78,18 +72,18 @@ export function EntryForm({ type, entries, onChange }) {
   // Add this effect to handle the improvement result
   useEffect(() => {
     if (improvedContent && !isImproving) {
-      setValue("description", improvedContent);
-      toast.success("Description improved successfully!");
+      setValue('description', improvedContent);
+      toast.success('Description improved successfully!');
     }
     if (improveError) {
-      toast.error(improveError.message || "Failed to improve description");
+      toast.error(improveError.message || 'Failed to improve description');
     }
   }, [improvedContent, improveError, isImproving, setValue]);
 
   const handleImproveDescription = async () => {
-    const description = watch("description");
+    const description = watch('description');
     if (!description) {
-      toast.error("Please enter a description first");
+      toast.error('Please enter a description first');
       return;
     }
 
@@ -123,9 +117,7 @@ export function EntryForm({ type, entries, onChange }) {
                   ? `${item.startDate} - Present`
                   : `${item.startDate} - ${item.endDate}`}
               </p>
-              <p className="mt-2 text-sm whitespace-pre-wrap">
-                {item.description}
-              </p>
+              <p className="mt-2 text-sm whitespace-pre-wrap">{item.description}</p>
             </CardContent>
           </Card>
         ))}
@@ -139,54 +131,36 @@ export function EntryForm({ type, entries, onChange }) {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Input
-                  placeholder="Title/Position"
-                  {...register("title")}
-                  error={errors.title}
-                />
-                {errors.title && (
-                  <p className="text-sm text-red-500">{errors.title.message}</p>
-                )}
+                <Input placeholder="Title/Position" {...register('title')} error={errors.title} />
+                {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
               </div>
               <div className="space-y-2">
                 <Input
                   placeholder="Organization/Company"
-                  {...register("organization")}
+                  {...register('organization')}
                   error={errors.organization}
                 />
                 {errors.organization && (
-                  <p className="text-sm text-red-500">
-                    {errors.organization.message}
-                  </p>
+                  <p className="text-sm text-red-500">{errors.organization.message}</p>
                 )}
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Input
-                  type="month"
-                  {...register("startDate")}
-                  error={errors.startDate}
-                />
+                <Input type="month" {...register('startDate')} error={errors.startDate} />
                 {errors.startDate && (
-                  <p className="text-sm text-red-500">
-                    {errors.startDate.message}
-                  </p>
+                  <p className="text-sm text-red-500">{errors.startDate.message}</p>
                 )}
               </div>
               <div className="space-y-2">
                 <Input
                   type="month"
-                  {...register("endDate")}
+                  {...register('endDate')}
                   disabled={current}
                   error={errors.endDate}
                 />
-                {errors.endDate && (
-                  <p className="text-sm text-red-500">
-                    {errors.endDate.message}
-                  </p>
-                )}
+                {errors.endDate && <p className="text-sm text-red-500">{errors.endDate.message}</p>}
               </div>
             </div>
 
@@ -194,11 +168,11 @@ export function EntryForm({ type, entries, onChange }) {
               <input
                 type="checkbox"
                 id="current"
-                {...register("current")}
+                {...register('current')}
                 onChange={(e) => {
-                  setValue("current", e.target.checked);
+                  setValue('current', e.target.checked);
                   if (e.target.checked) {
-                    setValue("endDate", "");
+                    setValue('endDate', '');
                   }
                 }}
               />
@@ -209,13 +183,11 @@ export function EntryForm({ type, entries, onChange }) {
               <Textarea
                 placeholder={`Description of your ${type.toLowerCase()}`}
                 className="h-32"
-                {...register("description")}
+                {...register('description')}
                 error={errors.description}
               />
               {errors.description && (
-                <p className="text-sm text-red-500">
-                  {errors.description.message}
-                </p>
+                <p className="text-sm text-red-500">{errors.description.message}</p>
               )}
             </div>
             <Button
@@ -223,7 +195,7 @@ export function EntryForm({ type, entries, onChange }) {
               variant="ghost"
               size="sm"
               onClick={handleImproveDescription}
-              disabled={isImproving || !watch("description")}
+              disabled={isImproving || !watch('description')}
             >
               {isImproving ? (
                 <>
@@ -258,11 +230,7 @@ export function EntryForm({ type, entries, onChange }) {
       )}
 
       {!isAdding && (
-        <Button
-          className="w-full"
-          variant="outline"
-          onClick={() => setIsAdding(true)}
-        >
+        <Button className="w-full" variant="outline" onClick={() => setIsAdding(true)}>
           <PlusCircle className="h-4 w-4 mr-2" />
           Add {type}
         </Button>

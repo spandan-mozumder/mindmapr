@@ -1,6 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { Pencil } from 'lucide-react';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogClose,
@@ -10,12 +12,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Edit, Pencil } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { updateCourseBasicInfo } from "@/actions/course";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { updateCourseBasicInfo } from '@/actions/course';
 
 export default function EditCourseBasicInfo({ course, setCourse }) {
   const [name, setName] = useState();
@@ -34,9 +35,9 @@ export default function EditCourseBasicInfo({ course, setCourse }) {
       if (updatedCourse) {
         setCourse(updatedCourse);
       }
-      console.log("✅ Updated successfully");
+      toast.success('Updated successfully');
     } catch (err) {
-      console.error("❌ Update failed:", err);
+      toast.error('Update failed');
     }
   };
 
@@ -54,10 +55,7 @@ export default function EditCourseBasicInfo({ course, setCourse }) {
             <DialogDescription>
               <div className="mt-3">
                 <label>Course Title</label>
-                <Input
-                  defaultValue={course?.name}
-                  onChange={(e) => setName(e?.target.value)}
-                />
+                <Input defaultValue={course?.name} onChange={(e) => setName(e?.target.value)} />
               </div>
 
               <div>

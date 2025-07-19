@@ -1,92 +1,90 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState, use } from "react";
+import React, { useEffect, useState, use } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { getCourseById } from "@/actions/course";
-import CourseBasicInfo from "./_components/course-basic-info";
-import CourseDetail from "./_components/course-detail";
-import ChapterList from "./_components/chapter-list";
-import { Button } from "@/components/ui/button";
-import { GenerateChapterContent } from "@/configs/AIModel";
-import LoadingDialog from "../_components/loading";
-import { getVideos } from "@/configs/Service";
-import { saveChapterToDB } from "@/actions/chapters";
-import { useRouter } from "next/navigation";
+import { Button } from '@/components/ui/button';
+import LoadingDialog from '../_components/loading';
+
+import { getCourseById } from '@/actions/course';
+import { saveChapterToDB } from '@/actions/chapters';
+import { GenerateChapterContent } from '@/configs/AIModel';
+import { getVideos } from '@/configs/Service';
+
+import CourseBasicInfo from './_components/course-basic-info';
+import CourseDetail from './_components/course-detail';
+import ChapterList from './_components/chapter-list';
 
 export default function CourseLayout({ params }) {
   const unwrappedParams = use(params);
   const [course, setCourse] = useState(null);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const courseData = await getCourseById(unwrappedParams.courseId);
-      setCourse(courseData);
+    const fetchCourse = async () => {
+      const data = await getCourseById(unwrappedParams.courseId);
+      setCourse(data);
     };
-    fetchData();
+    fetchCourse();
   }, [unwrappedParams.courseId]);
 
+  const sanitizeGeminiResponse = (text) => {
+    return text
+      .replace(/^```json\s*/i, '') // Remove leading ```json
+      .replace(/^json\s*/i, '') // Remove 'json' alone
+      .replace(/```$/g, '') // Remove trailing ```
+      .trim();
+  };
+
   const generateChapterContent = async () => {
-    const chapters = course?.courseOutput?.Chapters;
+    if (!course || !Array.isArray(course.courseOutput?.Chapters)) return;
 
-    let counter=1;
+    setLoading(true);
 
-    for (const chapter of chapters) {
-      const PROMPT =
-        "Explain the concept in Detail on Topic: " +
-        course?.name +
-        " Chapter: " +
-        chapter?.ChapterName +
-        ", in JSON Format with list of array with field as title, explanation on give chapter in detail, Code filed in <precode> Code format) if applicable";
+    for (let i = 0; i < course.courseOutput.Chapters.length; i++) {
+      const chapter = course.courseOutput.Chapters[i];
+      const chapterId = i + 1;
 
-      console.log(PROMPT);
+      const prompt = `Explain the concept in detail on Topic: ${course.name}, Chapter: ${chapter.ChapterName}, in JSON Format with array of items having 'title', 'explanation', and 'code' (code should be wrapped in <precode> if applicable).`;
 
       try {
-        setLoading(true);
-
-        const rawResponse = await GenerateChapterContent(PROMPT);
-
-        const jsonString = rawResponse.replace(/```json\n|```/g, "");
+        const rawResponse = await GenerateChapterContent(prompt);
+        const jsonString = sanitizeGeminiResponse(rawResponse);
         const contentJson = JSON.parse(jsonString);
 
-        const videoResults = await getVideos(
-          course?.name + ":" + chapter?.ChapterName
-        );
-        const videoId = videoResults?.[0]?.id?.videoId || null;
+        const videos = await getVideos(`${course.name}: ${chapter.ChapterName}`);
+        const videoId = videos?.[0]?.id?.videoId || null;
 
         const result = await saveChapterToDB({
           courseId: course.id,
-          chapterId: counter,
+          chapterId,
           content: contentJson,
-          videoId: videoId,
+          videoId,
         });
 
-        counter++;
-
         if (!result.success) {
-          console.error("Server action failed:", result.error);
+          console.error('Failed to save chapter:', result.error);
         }
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error generating chapter content:", error);
-        setLoading(false);
+      } catch (err) {
+        console.error(`Error processing Chapter ${chapterId}:`, err);
       }
     }
-    // router.replace(`/course/create-course/${unwrappedParams.courseId}/finish`);
-    router.replace("/course");
+
+    setLoading(false);
+    router.replace(`/course/create-course/${unwrappedParams.courseId}/finish`);
+    // router.replace("/course");
   };
 
   return (
     <div className="mt-10 px-7 md:px-20 lg:px-40">
-      <h2 className="font-bold text-center text-2xl">Course Layout</h2>
+      <h2 className="text-2xl font-bold text-center">Course Layout</h2>
 
       <CourseBasicInfo course={course} />
       <CourseDetail course={course} />
       <ChapterList course={course} />
 
-      <Button className="mt-10" onClick={() => generateChapterContent()}>
+      <Button className="mt-10" onClick={generateChapterContent}>
         Generate Course Content
       </Button>
 

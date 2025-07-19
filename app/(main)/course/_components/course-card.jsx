@@ -1,15 +1,16 @@
-import Image from "next/image";
-import React from "react";
-import coursebanner from "@/assets/coursebanner.png";
-import { Card } from "@/components/ui/card";
-import { Book, EllipsisVertical } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import DropdownDelete from "./dropdown-delete";
-import { deleteCourseById } from "@/actions/course";
-import { useRouter } from "next/navigation";
+import Image from 'next/image';
+import React from 'react';
+import coursebanner from '@/assets/coursebanner.png';
+import { Card } from '@/components/ui/card';
+import { Book, EllipsisVertical } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import DropdownDelete from './dropdown-delete';
+import { deleteCourseById } from '@/actions/course';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function CourseCard({ course, refereshData }) {
-  const router = useRouter()
+  const router = useRouter();
   const handleOnDelete = async () => {
     try {
       const result = await deleteCourseById(course?.id);
@@ -18,17 +19,14 @@ export default function CourseCard({ course, refereshData }) {
         refereshData();
       }
     } catch (error) {
-      console.error("Unexpected error while deleting:", error);
-      alert("Something went wrong.");
+      console.error('Unexpected error while deleting:', error);
+      alert('Something went wrong.');
     }
   };
 
   return (
     <Card
-      className={
-        "p-2 shadow-sm shadow-secondary hover:shadow-lg transition-shadow duration-300"
-      }
-      onClick={()=>router.push(`/course/${course?.id}`)}
+      className={'p-2 shadow-sm shadow-secondary hover:shadow-lg transition-shadow duration-300'}
     >
       <Image
         src={coursebanner}
@@ -40,7 +38,7 @@ export default function CourseCard({ course, refereshData }) {
 
       <div className="p-2 flex flex-col gap-2">
         <h2 className="font-medium text-lg px-2 flex flex-row justify-between items-center">
-          {course?.name}{" "}
+          <Link href={`/course/${course?.id}`}>{course?.name}</Link>{' '}
           <DropdownDelete handleDelete={() => handleOnDelete()}>
             <Button variant="secondary">
               <EllipsisVertical />
@@ -53,9 +51,7 @@ export default function CourseCard({ course, refereshData }) {
             <Book />
             {course?.courseOutput?.NoOfChapters} Chapters
           </h2>
-          <h2 className="p-2 bg-secondary rounded-sm">
-            Level: {course?.courseOutput?.Level}
-          </h2>
+          <h2 className="p-2 bg-secondary rounded-sm">Level: {course?.courseOutput?.Level}</h2>
         </div>
       </div>
     </Card>

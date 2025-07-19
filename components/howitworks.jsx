@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import { howItWorks } from "@/data/howitworks";
+import { howItWorks } from '@/data/howitworks';
 
 const HowItWorksSection = () => {
   return (
@@ -15,10 +15,7 @@ const HowItWorksSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
           {howItWorks.map((item, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center text-center space-y-4"
-            >
+            <div key={index} className="flex flex-col items-center text-center space-y-4">
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
                 {item.icon}
               </div>

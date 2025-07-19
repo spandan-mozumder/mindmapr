@@ -1,8 +1,8 @@
-import { Book, ChartBar, Clock, PlayCircle } from "lucide-react";
-import React from "react";
+import React from 'react';
+import { Book, ChartBar, Clock, PlayCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function CourseDetail({ course }) {
-  console.log(course);
   return (
     <div className="border p-6 rounded-xl shadow-sm mt-3">
       <div className="grid grid-cols-2 md:grid-cols-4">
@@ -22,9 +22,7 @@ export default function CourseDetail({ course }) {
           </div>
           <div>
             <h2 className="text-xs text-gray-500">Duration</h2>
-            <h2 className="font-medium text-lg">
-              {course?.courseOutput?.Duration}
-            </h2>
+            <h2 className="font-medium text-lg">{course?.courseOutput?.Duration}</h2>
           </div>
         </div>
 
@@ -34,9 +32,7 @@ export default function CourseDetail({ course }) {
           </div>
           <div>
             <h2 className="text-xs text-gray-500">No Of Chapters</h2>
-            <h2 className="font-medium text-lg">
-              {course?.courseOutput?.NoOfChapters}
-            </h2>
+            <h2 className="font-medium text-lg">{course?.courseOutput?.NoOfChapters}</h2>
           </div>
         </div>
 

@@ -1,16 +1,17 @@
-"use client";
+'use client';
 
-import React, { useContext, useEffect } from "react";
-import { ClipboardPen, Grid2x2Check, Lightbulb } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import SelectCategory from "./_components/category";
-import TopicDescription from "./_components/description";
-import SelectOption from "./_components/option";
-import { UserInputContext } from "../../_context/userinputcontext";
-import {GenerateCourseLayout} from "@/configs/AIModel";
-import LoadingDialog from "./_components/loading";
-import { saveCourseLayoutInDB } from "@/actions/course";
-import { useRouter } from "next/navigation";
+import React, { useContext, useEffect } from 'react';
+import { ClipboardPen, Grid2x2Check, Lightbulb } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import SelectCategory from './_components/category';
+import TopicDescription from './_components/description';
+import SelectOption from './_components/option';
+import { UserInputContext } from '../../_context/userinputcontext';
+import { GenerateCourseLayout } from '@/configs/AIModel';
+import LoadingDialog from './_components/loading';
+import { saveCourseLayoutInDB } from '@/actions/course';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function CreateCoursePage() {
   const [activeIndex, setActiveIndex] = React.useState(0);
@@ -21,17 +22,17 @@ export default function CreateCoursePage() {
   const StepperOptions = [
     {
       id: 1,
-      name: "Category",
+      name: 'Category',
       icon: <Grid2x2Check />,
     },
     {
       id: 2,
-      name: "Topic and Description",
+      name: 'Topic and Description',
       icon: <Lightbulb />,
     },
     {
       id: 1,
-      name: "Options",
+      name: 'Options',
       icon: <ClipboardPen />,
     },
   ];
@@ -42,15 +43,13 @@ export default function CreateCoursePage() {
     }
     if (
       activeIndex == 0 &&
-      (userCourseInput?.category?.length == 0 ||
-        userCourseInput?.category == undefined)
+      (userCourseInput?.category?.length == 0 || userCourseInput?.category == undefined)
     ) {
       return true;
     }
     if (
       activeIndex == 1 &&
-      (userCourseInput?.topic?.length == 0 ||
-        userCourseInput?.topic == undefined)
+      (userCourseInput?.topic?.length == 0 || userCourseInput?.topic == undefined)
     ) {
       return true;
     } else if (
@@ -67,35 +66,31 @@ export default function CreateCoursePage() {
 
   const generateCourseLayout = async () => {
     const BASIC_PROMPT =
-      "Generate a course tutorial on following detail with field as Course Name, Description, Along with Chapter Name, About, Duration";
+      'Generate a course tutorial on following detail with field as Course Name, Description, Along with Chapter Name, About, Duration';
     const USER_INPUT_PROMPT =
-      "Category: " +
+      'Category: ' +
       userCourseInput?.category +
-      ", Topic: " +
+      ', Topic: ' +
       userCourseInput?.topic +
-      " Level: " +
+      ' Level: ' +
       userCourseInput?.level +
-      " Duration: " +
+      ' Duration: ' +
       userCourseInput?.duration +
-      " NoOfChapters: " +
+      ' NoOfChapters: ' +
       userCourseInput?.noOfChapters +
-      " in JSON format";
+      ' in JSON format';
 
     const FINAL_PROMPT = BASIC_PROMPT + USER_INPUT_PROMPT;
 
     try {
       setLoading(true);
       const rawResponse = await GenerateCourseLayout(FINAL_PROMPT);
-      const jsonString = rawResponse.replace(/```json\n|```/g, "");
+      const jsonString = rawResponse.replace(/```json\n|```/g, '');
       const courseData = JSON.parse(jsonString);
       setLoading(false);
-      const response = await saveCourseLayoutInDB(
-        courseData,
-        userCourseInput.displayVideo,
-      );
+      const response = await saveCourseLayoutInDB(courseData, userCourseInput.displayVideo);
       router.push(`/course/create-course/${response.id}`);
     } catch (error) {
-      console.error("Failed to generate course layout:", error);
       return null;
     }
   };
@@ -107,17 +102,15 @@ export default function CreateCoursePage() {
           <div key={index} className="flex flex-row items-center">
             <div className="flex flex-col items-center gap-1 w-[50px] md:w-[150px]">
               <div
-                className={`p-3 rounded-full bg-secondary text-foreground ${activeIndex >= index && "bg-white text-secondary"}`}
+                className={`p-3 rounded-full bg-secondary text-foreground ${activeIndex >= index && 'bg-white text-secondary'}`}
               >
                 {item.icon}
               </div>
-              <h2 className="hidden md:block md:text-sm text-primary">
-                {item.name}
-              </h2>
+              <h2 className="hidden md:block md:text-sm text-primary">{item.name}</h2>
             </div>
             {index != StepperOptions?.length - 1 && (
               <div
-                className={`h-1 w-[50px] md:w-[100px] rounded-full lg:w-[170px] bg-secondary ${activeIndex - 1 >= index && "bg-white"}`}
+                className={`h-1 w-[50px] md:w-[100px] rounded-full lg:w-[170px] bg-secondary ${activeIndex - 1 >= index && 'bg-white'}`}
               ></div>
             )}
           </div>
@@ -148,11 +141,7 @@ export default function CreateCoursePage() {
           </Button>
         )}
         {activeIndex == 2 && (
-          <Button
-            disabled={checkStatus()}
-            variant="outline"
-            onClick={() => generateCourseLayout()}
-          >
+          <Button disabled={checkStatus()} variant="outline" onClick={() => generateCourseLayout()}>
             Generate Course Layout
           </Button>
         )}

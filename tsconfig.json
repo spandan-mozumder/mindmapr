@@ -30,7 +30,9 @@
     "**/*.tsx",
     "app/(main)/resume/page.jsx",
     "app/(main)/ai-cover-letter/[id]/page.jsx",
-    "app/(main)/course/create-course/page.jsx"
+    "app/(main)/course/create-course/page.jsx",
+    "app/(main)/course/unpublished/layout.jsx",
+    "app/(main)/course/unpublished/page.jsx"
   ],
   "exclude": ["node_modules"]
 }

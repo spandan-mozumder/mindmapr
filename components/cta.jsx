@@ -1,7 +1,7 @@
-import Link from "next/link";
-import React from "react";
-import { Button } from "./ui/button";
-import { ArrowRight } from "lucide-react";
+import Link from 'next/link';
+import React from 'react';
+import { Button } from './ui/button';
+import { ArrowRight } from 'lucide-react';
 
 const CTASection = () => {
   return (
@@ -12,15 +12,11 @@ const CTASection = () => {
             Ready to Accelerate Your Career?
           </h2>
           <p className="mx-auto max-w-[600px] text-primary-foreground/80 md:text-xl">
-            Join thousands of professionals who are advancing their careers with
-            AI-powered guidance.
+            Join thousands of professionals who are advancing their careers with AI-powered
+            guidance.
           </p>
           <Link href="/dashboard" passHref>
-            <Button
-              size="lg"
-              variant="secondary"
-              className="h-11 mt-5 animate-bounce"
-            >
+            <Button size="lg" variant="secondary" className="h-11 mt-5 animate-bounce">
               Start Your Journey Today <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>

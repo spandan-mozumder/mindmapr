@@ -1,6 +1,6 @@
-import React from "react";
-import { features } from "@/data/features";
-import { Card, CardContent } from "./ui/card";
+import React from 'react';
+import { features } from '@/data/features';
+import { Card, CardContent } from './ui/card';
 
 const FeaturesSection = () => {
   return (

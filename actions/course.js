@@ -1,20 +1,19 @@
-"use server";
+'use server';
 
-import { db } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from '@clerk/nextjs/server';
+import { db } from '@/lib/prisma';
 
 export async function saveCourseLayoutInDB(courseData, displayVideo) {
   const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
+  if (!userId) throw new Error('Unauthorized');
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
   });
-
-  if (!user) throw new Error("User not found");
+  if (!user) throw new Error('User not found');
 
   try {
-    const response = await db.courseList.create({
+    const course = await db.courseList.create({
       data: {
         name: courseData.CourseName,
         category: courseData.Category,
@@ -24,24 +23,21 @@ export async function saveCourseLayoutInDB(courseData, displayVideo) {
         userId: user.id,
       },
     });
-
-    console.log("✅ Course saved successfully:", response);
-    return response;
+    return course;
   } catch (error) {
-    console.error("❌ Error saving course:", error);
-    return null;
+    console.error('Error saving course:', error);
+    throw new Error('Failed to save course');
   }
 }
 
 export async function getCourseById(courseId) {
   const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
+  if (!userId) throw new Error('Unauthorized');
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
   });
-
-  if (!user) throw new Error("User not found");
+  if (!user) throw new Error('User not found');
 
   try {
     const course = await db.courseList.findFirst({
@@ -50,39 +46,31 @@ export async function getCourseById(courseId) {
         userId: user.id,
       },
     });
-
-    if (!course) {
-      console.warn("⚠️ Course not found or does not belong to user");
-      return null;
-    }
-    return course;
+    return course || null;
   } catch (error) {
-    console.error("❌ Error fetching course by ID:", error);
-    return null;
+    console.error('Error fetching course by ID:', error);
+    throw new Error('Failed to fetch course');
   }
 }
 
 export async function updateCourseBasicInfo(courseId, { name, courseOutput }) {
   const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
+  if (!userId) throw new Error('Unauthorized');
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
   });
+  if (!user) throw new Error('User not found');
 
-  if (!user) throw new Error("User not found");
-
-  // Get the current courseOutput
-  const existingCourse = await db.courseList.findFirst({
+  const existing = await db.courseList.findFirst({
     where: {
       id: courseId,
       userId: user.id,
     },
   });
+  if (!existing) throw new Error('Course not found');
 
-  if (!existingCourse) throw new Error("Course not found");
-
-  const updatedCourse = await db.courseList.update({
+  const updated = await db.courseList.update({
     where: {
       id: courseId,
       userId: user.id,
@@ -90,62 +78,51 @@ export async function updateCourseBasicInfo(courseId, { name, courseOutput }) {
     data: {
       name,
       courseOutput: {
-        ...existingCourse.courseOutput,
+        ...existing.courseOutput,
         ...courseOutput,
       },
     },
   });
 
-  return updatedCourse;
+  return updated;
 }
 
-export async function updateChapterByIndex(
-  courseId,
-  chapterIndex,
-  updatedData
-) {
+export async function updateChapterByIndex(courseId, chapterIndex, updatedData) {
   const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
+  if (!userId) throw new Error('Unauthorized');
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
   });
-
-  if (!user) throw new Error("User not found");
+  if (!user) throw new Error('User not found');
 
   const course = await db.courseList.findFirst({
     where: { id: courseId, userId: user.id },
   });
-
-  if (!course)
-    throw new Error("Course not found or does not belong to the user");
+  if (!course) throw new Error('Course not found or access denied');
 
   const courseOutput = course.courseOutput;
+  if (!Array.isArray(courseOutput?.Chapters)) {
+    throw new Error('Invalid chapter structure');
+  }
 
-  if (!courseOutput?.Chapters || !Array.isArray(courseOutput.Chapters)) {
-    throw new Error("Invalid courseOutput format");
+  if (chapterIndex < 0 || chapterIndex >= courseOutput.Chapters.length) {
+    throw new Error('Invalid chapter index');
   }
 
   const updatedChapters = [...courseOutput.Chapters];
-
-  if (chapterIndex < 0 || chapterIndex >= updatedChapters.length) {
-    throw new Error("Invalid chapter index");
-  }
-
   updatedChapters[chapterIndex] = {
     ...updatedChapters[chapterIndex],
     ...updatedData,
   };
 
-  const newCourseOutput = {
-    ...courseOutput,
-    Chapters: updatedChapters,
-  };
-
   await db.courseList.update({
     where: { id: courseId },
     data: {
-      courseOutput: newCourseOutput,
+      courseOutput: {
+        ...courseOutput,
+        Chapters: updatedChapters,
+      },
     },
   });
 
@@ -154,57 +131,83 @@ export async function updateChapterByIndex(
 
 export async function updatePublishedCourse(courseId) {
   const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
+  if (!userId) throw new Error('Unauthorized');
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
   });
+  if (!user) throw new Error('User not found');
 
-  if (!user) throw new Error("User not found");
-
-  const updatedCourse = await db.courseList.update({
+  const updated = await db.courseList.update({
     where: {
       id: courseId,
       userId: user.id,
     },
     data: {
-      isPublished: "Yes",
+      isPublished: 'Yes',
     },
   });
 
-  if (!updatedCourse) {
-    throw new Error("Failed to update course");
-  }
-  return updatedCourse;
+  if (!updated) throw new Error('Failed to publish course');
+
+  return updated;
 }
 
-export async function getCoursesByUserId() {
+export async function getCoursesByUserIsPublished() {
   const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
+  if (!userId) throw new Error('Unauthorized');
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
   });
-
-  if (!user) throw new Error("User not found");
+  if (!user) throw new Error('User not found');
 
   try {
     const courses = await db.courseList.findMany({
       where: {
         userId: user.id,
+        isPublished: 'Yes',
       },
       include: {
-        chapters: true, // include related chapters if needed
+        chapters: true,
       },
       orderBy: {
-        createdAt: "desc", // optional: newest first
+        createdAt: 'desc',
       },
     });
     return courses;
-    
   } catch (error) {
-    console.error("Error fetching courses for user:", error);
-    throw new Error("Unable to fetch courses");
+    console.error('Error fetching courses:', error);
+    throw new Error('Unable to fetch courses');
+  }
+}
+
+export async function getCoursesByUserIsNotPublished() {
+  const { userId } = await auth();
+  if (!userId) throw new Error('Unauthorized');
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+  if (!user) throw new Error('User not found');
+
+  try {
+    const courses = await db.courseList.findMany({
+      where: {
+        userId: user.id,
+        isPublished: 'No',
+      },
+      include: {
+        chapters: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    return courses;
+  } catch (error) {
+    console.error('Error fetching courses:', error);
+    throw new Error('Unable to fetch courses');
   }
 }
 
@@ -224,7 +227,7 @@ export async function deleteCourseById(courseId) {
 
     return { success: true };
   } catch (error) {
-    console.error("Failed to delete course and chapters:", error);
-    return { success: false, error: "Delete failed. Check server logs." };
+    console.error('Failed to delete course and chapters:', error);
+    return { success: false, error: 'Delete failed. Check server logs.' };
   }
 }

@@ -7,7 +7,7 @@ export default async function BotprepPage() {
   return (
     <div className="m-5 space-y-4">
       <div className="flex gap-10">
-        <Link href="/course/create-course">
+        <Link href="/botprep/create-interview">
           <Button variant="secondary">
             <Plus className="h-4 w-4 mr-2" />
             Create New Interview

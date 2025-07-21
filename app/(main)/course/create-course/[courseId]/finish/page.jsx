@@ -29,7 +29,7 @@ export default function FinishPage({ params }) {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(
-        `${process.env.NEXT_PUBLIC_HOST_NAME}/course/${course.id}`,
+        `${process.env.NEXT_PUBLIC_HOST_NAME}course/${course.id}`,
       );
       toast.success('Link copied to clipboard!');
     } catch (error) {

@@ -33,6 +33,6 @@
     "app/(main)/course/create-course/page.jsx",
     "app/(main)/course/unpublished/layout.jsx",
     "app/(main)/course/unpublished/page.jsx"
-  ],
+, "app/(main)/botprep/create-interview/page.jsx"  ],
   "exclude": ["node_modules"]
 }

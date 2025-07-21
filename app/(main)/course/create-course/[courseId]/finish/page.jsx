@@ -29,7 +29,7 @@ export default function FinishPage({ params }) {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(
-        `${process.env.NEXT_PUBLIC_HOST_NAME}course/${course.id}`,
+        `${process.env.NEXT_PUBLIC_HOST_NAME}/course/${course.id}`,
       );
       toast.success('Link copied to clipboard!');
     } catch (error) {
@@ -48,7 +48,7 @@ export default function FinishPage({ params }) {
       <h2 className="text-center text-gray-400 border p-2 rounded-md flex gap-10 items-center justify-center break-words flex-wrap">
         <span className="hidden md:block">
           {course?.id
-            ? `${process.env.NEXT_PUBLIC_HOST_NAME}/${course.id}/start`
+            ? `${process.env.NEXT_PUBLIC_HOST_NAME}/course/${course.id}/start`
             : 'Loading link...'}
         </span>
         <Button variant="secondary" onClick={handleCopyLink}>

@@ -26,6 +26,7 @@ model User {
   resume      Resume?
   coverLetter CoverLetter[]
   courseList  CourseList[]
+  interviewDetails InterviewDetails[]
 }
 
 model Assessment {
@@ -120,6 +121,22 @@ model Chapter {
   course CourseList @relation(fields: [courseId], references: [id])
 
   @@index([courseId])
+}
+
+model InterviewDetails {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+
+  jobPosition    String
+  jobDescription String
+  duration       String
+  type           String[] 
+  questionList   Json   
+
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 enum DemandLevel {

@@ -144,3 +144,75 @@ export async function GenerateChapterContent(topicPrompt) {
     throw error;
   }
 }
+
+export async function GenerateInterviewQuestions(formData) {
+  const ai = new GoogleGenAI({
+    apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
+  });
+
+  const model = 'gemini-2.0-flash-lite';
+
+  const rawPrompt = `You are an expert technical interviewer. Based on the following inputs, generate a well-structured list of high-quality interview questions:
+
+Job title: {{jobTitle}}
+Job description: {{jobDescription}}
+Interview duration: {{duration}}
+Interview type: {{type}}
+
+Your Task:
+Analyze the job description to identify key responsibilities, required skills, and expected experience. Generate a list of interview questions depending on interview duration. Ensure the questions match the tone and structure of a real-life {{type}} interview.
+
+Format your response in JSON format with an array list of questions.
+
+Format:
+interviewQuestions = [
+  {
+    "question": "Your question here",
+    "type": "Technical / Behavioral / Experience / Problem Solving / Leadership"
+  },
+  ...
+]
+
+The goal is to create a structured, relevant, and time-optimized interview plan for a {{jobTitle}} role.`;
+
+  const interpolatedPrompt = rawPrompt
+    .replace(/{{jobTitle}}/g, formData.jobPosition)
+    .replace(/{{jobDescription}}/g, formData.jobDescription)
+    .replace(/{{duration}}/g, formData.duration)
+    .replace(/{{type}}/g, formData.type.join(', '));
+
+  try {
+    const responseStream = await ai.models.generateContentStream({
+      model,
+      contents: [
+        {
+          role: 'user',
+          parts: [{ text: interpolatedPrompt }],
+        },
+      ],
+      config: {
+        responseMimeType: 'text/plain',
+      },
+    });
+
+    let fullResponse = '';
+    for await (const chunk of responseStream) {
+      if (chunk.text) {
+        fullResponse += chunk.text;
+      }
+    }
+
+    const cleanedResponse = fullResponse.replace(/```(?:json)?|```/g, '').trim();
+
+    try {
+      const parsed = JSON.parse(cleanedResponse);
+      return parsed;
+    } catch (jsonError) {
+      console.warn('Response is not valid JSON:', cleanedResponse);
+      throw new Error('Gemini returned invalid JSON format');
+    }
+  } catch (error) {
+    console.error('An error occurred while generating interview questions:', error);
+    throw error;
+  }
+}

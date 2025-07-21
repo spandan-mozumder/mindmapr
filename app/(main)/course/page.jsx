@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CircleAlert, Plus } from 'lucide-react';
-import CourseListUnpublished from './_components/course-list';
+import CourseList from './_components/course-list';
 
 export default async function CoursePage() {
   return (
@@ -22,7 +22,7 @@ export default async function CoursePage() {
         </Link>
       </div>
 
-      <CourseListUnpublished />
+      <CourseList />
     </div>
   );
 }

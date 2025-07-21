@@ -191,6 +191,8 @@ export async function getCoursesByUserIsNotPublished() {
   });
   if (!user) throw new Error('User not found');
 
+  console.log('Fetching unpublished courses for user:', user.id);
+
   try {
     const courses = await db.courseList.findMany({
       where: {
@@ -204,6 +206,7 @@ export async function getCoursesByUserIsNotPublished() {
         createdAt: 'desc',
       },
     });
+    console.log('Fetched courses unpublished:', courses);
     return courses;
   } catch (error) {
     console.error('Error fetching courses:', error);

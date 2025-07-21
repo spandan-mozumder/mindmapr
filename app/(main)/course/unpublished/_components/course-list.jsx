@@ -2,7 +2,7 @@
 
 import { getCoursesByUserIsNotPublished } from '@/actions/course';
 import React, { useState, useEffect } from 'react';
-import CourseCard from '../../_components/course-card';
+import CourseCard from '../_components/course-card';
 
 export default function CourseListUnpublished() {
   const [courseList, setCourseList] = React.useState([]);
@@ -10,7 +10,6 @@ export default function CourseListUnpublished() {
   async function fetchCourses() {
     const courses = await getCoursesByUserIsNotPublished();
     setCourseList(courses);
-    console.log('Courses fetched:', courses);
   }
 
   useEffect(() => {

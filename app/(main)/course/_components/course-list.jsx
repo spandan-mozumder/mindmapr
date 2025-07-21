@@ -7,13 +7,12 @@ import CourseCard from './course-card';
 export default function CourseList() {
   const [courseList, setCourseList] = React.useState([]);
 
-  async function fetchCourses() {
-    const courses = await getCoursesByUserIsPublished();
-    setCourseList(courses);
-    console.log('Courses fetched:', courses);
-  }
-
   useEffect(() => {
+    async function fetchCourses() {
+      const courses = await getCoursesByUserIsPublished();
+      setCourseList(courses);
+    }
+
     fetchCourses();
   }, []);
 

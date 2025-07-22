@@ -106,6 +106,38 @@ CREATE TABLE "Chapter" (
     CONSTRAINT "Chapter_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "InterviewDetails" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "jobPosition" TEXT NOT NULL,
+    "jobDescription" TEXT NOT NULL,
+    "duration" TEXT NOT NULL,
+    "type" TEXT[],
+    "questionList" JSONB NOT NULL,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "InterviewDetails_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "InterviewFeedback" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "technicalSkills" INTEGER NOT NULL,
+    "communication" INTEGER NOT NULL,
+    "problemSolving" INTEGER NOT NULL,
+    "experience" INTEGER NOT NULL,
+    "summary" TEXT NOT NULL,
+    "recommendation" TEXT NOT NULL,
+    "reason" TEXT NOT NULL,
+    "userName" TEXT NOT NULL,
+    "userEmail" TEXT NOT NULL,
+    "interviewId" TEXT NOT NULL,
+
+    CONSTRAINT "InterviewFeedback_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_clerkUserId_key" ON "User"("clerkUserId");
 
@@ -133,6 +165,15 @@ CREATE INDEX "CourseList_userId_idx" ON "CourseList"("userId");
 -- CreateIndex
 CREATE INDEX "Chapter_courseId_idx" ON "Chapter"("courseId");
 
+-- CreateIndex
+CREATE INDEX "InterviewDetails_userId_idx" ON "InterviewDetails"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "InterviewFeedback_interviewId_key" ON "InterviewFeedback"("interviewId");
+
+-- CreateIndex
+CREATE INDEX "InterviewFeedback_interviewId_idx" ON "InterviewFeedback"("interviewId");
+
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_industry_fkey" FOREIGN KEY ("industry") REFERENCES "IndustryInsight"("industry") ON DELETE SET NULL ON UPDATE CASCADE;
 
@@ -150,3 +191,9 @@ ALTER TABLE "CourseList" ADD CONSTRAINT "CourseList_userId_fkey" FOREIGN KEY ("u
 
 -- AddForeignKey
 ALTER TABLE "Chapter" ADD CONSTRAINT "Chapter_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "CourseList"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "InterviewDetails" ADD CONSTRAINT "InterviewDetails_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "InterviewFeedback" ADD CONSTRAINT "InterviewFeedback_interviewId_fkey" FOREIGN KEY ("interviewId") REFERENCES "InterviewDetails"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -216,3 +216,83 @@ The goal is to create a structured, relevant, and time-optimized interview plan 
     throw error;
   }
 }
+
+export async function GenerateInterviewFeedback(interviewConversation) {
+  const ai = new GoogleGenAI({
+    apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
+  });
+
+  const model = 'gemini-2.0-flash-lite'; // or fallback to gemini-pro
+
+  const FEEDBACK_PROMPT = `
+Based on this interview conversation between the assistant and the user:
+
+{{conversation}}
+
+Give me feedback about the user’s performance in the interview. 
+Provide a rating out of 10 for:
+- technical skills
+- communication
+- problem solving
+- experience
+
+Also, give a summary of the interview in 3 lines, and one line indicating whether the candidate is suitable for the job or not. 
+If not suitable, explain why. If suitable, explain why.
+
+Return the response in JSON format like this:
+
+{
+  "feedback": {
+    "rating": {
+      "technicalSkills": 5,
+      "communication": 6,
+      "problemSolving": 7,
+      "experience": 4
+    },
+    "summary": "<3-line summary>",
+    "recommendation": "Suitable" or "Not Suitable",
+    "reason": "<reason>"
+  }
+}
+`.trim();
+
+  const FINAL_PROMPT = FEEDBACK_PROMPT.replace(
+    '{{conversation}}',
+    JSON.stringify(interviewConversation),
+  );
+
+  try {
+    const responseStream = await ai.models.generateContentStream({
+      model,
+      contents: [
+        {
+          role: 'user',
+          parts: [{ text: FINAL_PROMPT }],
+        },
+      ],
+      config: {
+        responseMimeType: 'text/plain',
+      },
+    });
+
+    let fullResponse = '';
+    for await (const chunk of responseStream) {
+      if (chunk.text) {
+        fullResponse += chunk.text;
+      }
+    }
+
+    const cleanedResponse = fullResponse.replace(/```(?:json)?|```/g, '').trim();
+
+    try {
+      const parsed = JSON.parse(cleanedResponse);
+      return parsed;
+    } catch (jsonError) {
+      console.warn('Invalid JSON:', cleanedResponse);
+      throw new Error('Gemini returned invalid JSON format');
+    }
+  } catch (error) {
+    console.error('An error occurred while generating interview feedback:', error);
+    throw error;
+  }
+}

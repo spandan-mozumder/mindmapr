@@ -64,3 +64,33 @@ export async function getInterviewDetailsById(interviewId) {
     return { success: false, message: error.message };
   }
 }
+
+export async function storeInterviewFeedback(feedback) {
+  const {
+    interviewId,
+    rating: { technicalSkills, communication, problemSolving, experience },
+    summary,
+    recommendation,
+    reason,
+  } = feedback;
+
+  try {
+    const response = await db.interviewFeedback.create({
+      data: {
+        interviewId,
+        technicalSkills,
+        communication,
+        problemSolving,
+        experience,
+        summary,
+        recommendation,
+        reason,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error saving interview feedback:', error);
+    throw new Error('Failed to store interview feedback');
+  }
+}

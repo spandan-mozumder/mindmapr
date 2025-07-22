@@ -21,11 +21,11 @@ model User {
   bio        String?
   experience Int?
 
-  skills      String[]
-  assessments Assessment[]
-  resume      Resume?
-  coverLetter CoverLetter[]
-  courseList  CourseList[]
+  skills           String[]
+  assessments      Assessment[]
+  resume           Resume?
+  coverLetter      CoverLetter[]
+  courseList       CourseList[]
   interviewDetails InterviewDetails[]
 }
 
@@ -101,7 +101,7 @@ model CourseList {
   createdAt    DateTime @default(now())
   userId       String
   includeVideo String   @default("No")
-  isPublished  String  @default("No")
+  isPublished  String   @default("No")
 
   user User @relation(fields: [userId], references: [id])
 
@@ -117,26 +117,46 @@ model Chapter {
   content   Json
   videoId   String?
 
-
   course CourseList @relation(fields: [courseId], references: [id])
 
   @@index([courseId])
 }
 
 model InterviewDetails {
-  id             String   @id @default(cuid())
-  createdAt      DateTime @default(now())
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
 
   jobPosition    String
   jobDescription String
   duration       String
-  type           String[] 
-  questionList   Json   
+  type           String[]
+  questionList   Json
 
-  userId         String
-  user           User     @relation(fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  interviewFeedback InterviewFeedback[]
 
   @@index([userId])
+}
+
+model InterviewFeedback {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  technicalSkills Int
+  communication   Int
+  problemSolving  Int
+  experience      Int
+
+  summary        String
+  recommendation String
+  reason         String
+
+  interviewId String
+  interview   InterviewDetails @relation(fields: [interviewId], references: [id])
+
+  @@index([interviewId])
 }
 
 enum DemandLevel {

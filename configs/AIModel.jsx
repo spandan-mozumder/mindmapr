@@ -222,7 +222,11 @@ export async function GenerateInterviewFeedback(interviewConversation) {
     apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
   });
 
-  const model = 'gemini-2.0-flash-lite'; // or fallback to gemini-pro
+  const model = 'gemini-2.0-flash-lite'
+
+  if (!conversation) {
+    throw new Error('Conversation is required to generate feedback.');
+  }
 
   const FEEDBACK_PROMPT = `
 Based on this interview conversation between the assistant and the user:

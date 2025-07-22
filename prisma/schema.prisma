@@ -135,7 +135,7 @@ model InterviewDetails {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
-  interviewFeedback InterviewFeedback[]
+  interviewFeedback InterviewFeedback?
 
   @@index([userId])
 }
@@ -153,11 +153,15 @@ model InterviewFeedback {
   recommendation String
   reason         String
 
-  interviewId String
+   userName  String
+  userEmail String
+
+  interviewId String @unique
   interview   InterviewDetails @relation(fields: [interviewId], references: [id])
 
   @@index([interviewId])
 }
+
 
 enum DemandLevel {
   HIGH

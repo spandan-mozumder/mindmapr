@@ -8,18 +8,73 @@ import AlertConfirmation from './_components/alert-confirmation';
 import { toast } from 'sonner';
 import { GenerateInterviewFeedback } from '@/configs/AIModel';
 import { storeInterviewFeedback } from '@/actions/botprep';
+import { useRouter } from 'next/navigation';
 
 export default function StartInterview() {
   const { interviewInfo } = useContext(InterviewDataContext);
-  const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY);
   const [activeUser, setActiveUser] = useState(false);
-  const conversationRef = useRef(null);
+  const [conversation, setConversation] = useState();
+  const router = useRouter();
+  const vapiRef = useRef(null);
+  const conversationRef = useRef();
 
   useEffect(() => {
-    if (interviewInfo) startCall();
+    if (!vapiRef.current) {
+      vapiRef.current = new Vapi(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY);
+    }
+
+    const vapi = vapiRef.current;
+
+    const handleMessage = (message) => {
+      if (message.conversation) {
+        const convoString = JSON.stringify(message.conversation);
+        setConversation(convoString);
+        conversationRef.current = convoString;
+      }
+    };
+
+    const handleSpeechStart = () => {
+      setActiveUser(false);
+    };
+
+    const handleSpeechEnd = () => {
+      setActiveUser(true);
+    };
+
+    const handleCallStart = () => {
+      toast('Call Connected...');
+    };
+
+    const handleCallEnd = () => {
+      toast('Call Ended...');
+      generateFeedback(conversationRef.current);
+    };
+
+    vapi.on('message', handleMessage);
+    vapi.on('speech-start', handleSpeechStart);
+    vapi.on('speech-end', handleSpeechEnd);
+    vapi.on('call-start', handleCallStart);
+    vapi.on('call-end', handleCallEnd);
+
+    return () => {
+      vapi.off('message', handleMessage);
+      vapi.off('speech-start', handleSpeechStart);
+      vapi.off('speech-end', handleSpeechEnd);
+      vapi.off('call-start', handleCallStart);
+      vapi.off('call-end', handleCallEnd);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (interviewInfo) {
+      startCall();
+    }
   }, [interviewInfo]);
 
   const startCall = () => {
+    const vapi = vapiRef.current;
+    if (!vapi || !interviewInfo) return;
+
     const questionList = interviewInfo?.interviewData?.questionList
       .map((q, i) => `${i + 1}. ${q.question}`)
       .join(', ');
@@ -45,32 +100,33 @@ export default function StartInterview() {
             content: `
 You are an AI voice assistant conducting interviews. Your job is to ask candidates provided interview questions and assess their responses.
 
-Begin with a friendly intro: 
+Begin with a friendly intro, setting a relaxed yet professional tone. Example: 
 "Hey there! Welcome to your ${interviewInfo?.interviewData?.jobPosition} interview. Let's get started with a few questions!"
 
-Ask one question at a time and wait for the candidate’s response. Be clear and concise.
+Ask one question at a time and wait for the candidate's response. Keep questions clear and concise.
 
 Questions: ${questionList}
 
-If they struggle, rephrase or give a hint (without the answer).
-Example: "Need a hint? Think about how React tracks component updates!"
+If the candidate struggles, offer hints or rephrase the question without giving away the answer. Example:
+"Need a hint? Think about how React tracks component updates!"
 
-After each response, provide quick feedback like:
-- "Nice! That's a solid answer."
-- "Hmm, not quite! Want to try again?"
+Provide brief, encouraging feedback after each answer. Example:
+"Nice! That’s a solid answer." or "Hmm, not quite! Want to try again?"
 
-Wrap up with a summary like:
-"That was great! You handled some tough questions well."
+Keep the conversation natural and engaging. Use casual phrases like "Alright, next up..." or "Let’s tackle a tricky one!"
 
-End positively:
+After 5–7 questions, wrap up by summarizing their performance. Example:
+"That was great! You handled some tough questions well. Keep sharpening your skills!"
+
+End on a positive note:
 "Thanks for chatting! Hope to see you crushing projects soon!"
 
 Guidelines:
-1. Be friendly and witty
-2. Keep it short and natural
-3. Adapt to confidence level
-4. Keep it focused on React
-            `.trim(),
+1. Be friendly, engaging, and witty
+2. Keep responses short and natural
+3. Adapt based on the candidate's confidence
+4. Ensure the interview remains focused on React
+`.trim(),
           },
         ],
       },
@@ -80,74 +136,41 @@ Guidelines:
   };
 
   const stopInterview = () => {
-    vapi.stop();
+    toast('Ending interview...');
+    vapiRef.current?.stop();
   };
 
-  vapi.on('speech-start', () => setActiveUser(false));
-  vapi.on('speech-end', () => setActiveUser(true));
+  const generateFeedback = async (finalConversation) => {
+    const interviewId = interviewInfo?.interviewData?.id;
 
-  vapi.on('call-start', () => {
-    toast('Call Connected...');
-    console.log('Call has started.');
-  });
-
-  vapi.on('call-end', () => {
-    toast('Call Ended...');
-    console.log('Call has ended.');
-    generateFeedback();
-  });
-
-  vapi.on('message', (message) => {
-    if (message?.conversation) {
-      conversationRef.current = message.conversation;
-    }
-    console.log('Message received:', message);
-  });
-
-  const generateFeedback = async () => {
-    const conv = conversationRef.current?.conversation;
-
-    if (!conv || conv.length === 0) {
-      toast.error('Conversation is empty!');
+    if (!interviewId) {
+      toast.error('Missing interview ID. Cannot save feedback.');
       return;
     }
 
     try {
-      const feedback = await GenerateInterviewFeedback(conv);
+      const feedback = await GenerateInterviewFeedback(finalConversation);
 
       if (!feedback?.feedback) {
-        toast.error('No feedback returned from AI');
-        return;
+        throw new Error('No feedback returned from AI');
       }
 
-      const {
-        feedback: {
-          rating: { technicalSkills, communication, problemSolving, experience },
-          summary,
-          recommendation,
-          reason,
-        },
-      } = feedback;
+      const feedbackData = {
+        interviewId,
+        rating: feedback.feedback.rating,
+        summary: feedback.feedback.summary,
+        recommendation: feedback.feedback.recommendation,
+        reason: feedback.feedback.reason,
+        userName: interviewInfo?.userName,
+        userEmail: interviewInfo?.userEmail,
+      };
 
-      const response = await storeInterviewFeedback({
-        interviewId: interviewInfo.interviewData.id,
-        technicalSkills,
-        communication,
-        problemSolving,
-        experience,
-        summary,
-        recommendation,
-        reason,
-      });
-
-      if (response.success) {
-        toast('Feedback saved successfully!');
-      } else {
-        toast.error('Failed to save feedback: ' + response.message);
-      }
-    } catch (err) {
-      console.error('Error generating feedback:', err);
-      toast.error('Feedback generation failed.');
+      await storeInterviewFeedback(feedbackData);
+      toast.success('Interview feedback saved successfully!');
+      router.replace('/botprep/interview/' + interviewId + '/complete');
+    } catch (error) {
+      console.error('generateFeedback Error:', error);
+      toast.error('Error in generateFeedback. Please start again.');
     }
   };
 
@@ -179,7 +202,7 @@ Guidelines:
       <div className="flex items-center gap-5 justify-center my-5">
         <Mic
           className="w-12 h-12 p-3 bg-gray-300 rounded-full text-black cursor-pointer"
-          onClick={() => console.log(interviewInfo)}
+          onClick={() => generateFeedback(conversationRef.current)}
         />
         <AlertConfirmation stopInterview={stopInterview}>
           <Phone className="w-12 h-12 p-3 bg-red-500 text-white rounded-full cursor-pointer" />
